@@ -81,6 +81,21 @@ def get_csv_data(fpath):
         return data
 
 
+def get_shift_data(fpath):
+    '''
+    takes a shift data file and returns a dictionary of the shifts.
+    '''
+    with open(fpath, 'r') as fyle:
+        reader = csv.reader(fyle)
+        shifts = []
+        for row in reader:
+            shifts.append({'name': row[0],
+                          'label': row[1],
+                          'start': row[2],
+                          'end': row[3]})
+    return shifts
+
+
 def check_data():
     '''
     Check the data in a data array for errors
@@ -92,7 +107,9 @@ def main():
     '''
     see module
     '''
+    shift_pattern_fp = 'shifts.txt'
     fpath = 'input.csv'
+    shift_insts = get_shift_data(shift_pattern_fp)
     calendar = get_csv_data(fpath)
 
     outstring = create_ical(calendar, shift_insts)

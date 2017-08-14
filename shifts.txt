@@ -1,0 +1,6 @@
+Shift Name, Shift Symbol, Shift Start, Shift End
+Development,Dv,0830,1700
+Early Morning,M,0515,1400
+Afternoon,E,1200,1800
+Long Met-shift Day,D,0515,1700
+Support Shift,d',0630,1600
