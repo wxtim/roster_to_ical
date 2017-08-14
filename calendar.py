@@ -71,6 +71,8 @@ def get_csv_data(fpath):
         reader = csv.reader(fyle)
         data = {}
         for row in reader:
+            while not row[-1]:
+                row.pop()
             if len(row[1:]) == 1:
                 data[row[0]], = row[1:]
             else:
