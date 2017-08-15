@@ -6,16 +6,23 @@ and return an ICS diary.\r\n
 import hashlib
 import datetime as dt
 import csv
+import sys
 
 
 def create_ical_event(name, start, end, day, label, year='2019', month='12'):
     '''
     creates a ical even with all the key details
     '''
-    uid = 'UID:{}'.format(hashlib.md5(str(dt.datetime.now())).hexdigest())
+    uid = hashlib.md5(str(dt.datetime.now())).hexdigest()
+    uid = 'UID:{}'.format(uid)
     dtstamp = 'DTSTAMP:{}{}{}T{}00Z'.format(year, month, day, '0001')
-    dtstart = 'DTSTART:{}{}{}T{}00Z'.format(year, month, day, start)
-    dtend = 'DTEND:{}{}{}T{}00Z'.format(year, month, day, end)
+    if int(start) > int(end):
+        end_day = str(int(day) + 1)
+        dtstart = 'DTSTART:{}{}{}T{}00Z'.format(year, month, day, start)
+        dtend = 'DTEND:{}{}{}T{}00Z'.format(year, month, end_day, end)
+    else:
+        dtstart = 'DTSTART:{}{}{}T{}00Z'.format(year, month, day, start)
+        dtend = 'DTEND:{}{}{}T{}00Z'.format(year, month, day, end)
     summary = 'SUMMARY:{}'.format(name)
     msg = '\r\nBEGIN:VEVENT\r\n{}\r\n{}\r\n{}\r\n{}\r\n{}\r\nEND:VEVENT\r\n'
     return msg.format(uid, dtstamp, dtstart, dtend, summary)
@@ -87,13 +94,18 @@ def main():
     '''
     see module
     '''
-    shift_pattern_fp = 'shifts.txt'
-    fpath = 'input.csv'
+    #print sys.argv
+    try:
+        _, fpath, shift_pattern_fp = sys.argv
+    except:
+        shift_pattern_fp = 'shifts.txt'
+        fpath = 'input.csv'
     shift_proto = get_shift_data(shift_pattern_fp)
     calendar = get_csv_data(fpath)
 
     outstring = create_ical(calendar, shift_proto)
-    fhandle = open('calendar.ics', 'w')
+    output_name = fpath[:-4] + ".ics"
+    fhandle = open(output_name, 'w')
     fhandle.write(outstring)
 
 
