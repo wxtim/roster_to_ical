@@ -105,9 +105,15 @@ def main():
     except:
         shift_pattern_fp = 'shifts.txt'
         fpath = 'input.csv'
-    shift_proto = get_shift_data(shift_pattern_fp)
-    calendar = get_csv_data(fpath)
-
+    try:
+        shift_proto = get_shift_data(shift_pattern_fp)
+        calendar = get_csv_data(fpath)
+    except:
+        emsg = ("There is a problem with you input files: "
+                "please check:"
+                "{}"
+                "{}")
+        raise TypeError(emsg.format(shift_pattern_fp, fpath))
     outstring = create_ical(calendar, shift_proto)
     output_name = fpath[:-4] + ".ics"
     fhandle = open(output_name, 'w')
