@@ -81,10 +81,10 @@ def get_shift_data(fpath):
         reader = csv.reader(fyle)
         shifts = []
         for row in reader:
-            shifts.append({'name': row[0],
-                           'label': row[1],
-                           'start': row[2],
-                           'end': row[3]})
+            shifts.append({'name': row[0].strip(),
+                           'label': row[1].strip(),
+                           'start': row[2].strip(),
+                           'end': row[3].strip()})
     return shifts
 
 
