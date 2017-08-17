@@ -65,6 +65,11 @@ def get_csv_data(fpath):
             else:
                 data[row[0]] = row[1:]
         data['diary'] = dict(zip(data['day'], data['shift']))
+        try:
+            if len(data['month']) == 1:
+                data['month'] = "0" + data['month']
+        except:
+            raise TypeError("Your input data did not have a month!")
         return data
 
 
