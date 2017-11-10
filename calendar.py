@@ -107,13 +107,19 @@ def main():
         fpath = 'input.csv'
     try:
         shift_proto = get_shift_data(shift_pattern_fp)
+    except:
+        emsg = ("There is a problem with your shift prototype file: "
+                "please check:"
+                "\n{}")
+        raise TypeError(emsg.format(shift_pattern_fp))
+    try:
         calendar = get_csv_data(fpath)
     except:
-        emsg = ("There is a problem with you input files: "
+        emsg = ("There is a problem with your calendar csv file: "
                 "please check:"
-                "{}"
-                "{}")
-        raise TypeError(emsg.format(shift_pattern_fp, fpath))
+                "\n{}")
+        raise TypeError(emsg.format(fpath))
+        
     outstring = create_ical(calendar, shift_proto)
     output_name = fpath[:-4] + ".ics"
     fhandle = open(output_name, 'w')
