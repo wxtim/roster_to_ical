@@ -81,11 +81,13 @@ def get_shift_data(fpath):
         reader = csv.reader(fyle)
         shifts = []
         for row in reader:
-            if ',' in row:
+            #print row
+            if len(row) > 0:
                 shifts.append({'name': row[0].strip(),
                                'label': row[1].strip(),
                                'start': row[2].strip(),
                                'end': row[3].strip()})
+    #print shifts
     return shifts
 
 
@@ -108,6 +110,7 @@ def main():
         fpath = 'input.csv'
     try:
         shift_proto = get_shift_data(shift_pattern_fp)
+        #print shift_proto
     except:
         emsg = ("There is a problem with your shift prototype file: "
                 "please check:"
