@@ -6,16 +6,14 @@ and return an ICS diary.\r\n
 import hashlib
 import datetime as dt
 import csv
-import sys
-import re
 
 from dateutil.parser import parse
 
 
-def ical_dt_constructor(dt, label, tz='Z'):
+def ical_dt_constructor(event_time, label, tzone='Z'):
     """
     args
-        dt (datetime):
+        event_time (datetime):
             A datetime object
         label (str)
             string defining ICAL event label
@@ -25,7 +23,7 @@ def ical_dt_constructor(dt, label, tz='Z'):
                 DTEND
 
     kwargs
-        tz (str)
+        tzone (str)
             timezone for ical construction
             defaults to 'Z'
 
@@ -35,19 +33,23 @@ def ical_dt_constructor(dt, label, tz='Z'):
     """
     ical_dt = '{}:{:04d}{:02d}{:02d}T{:02d}{:02d}{}'
     ical_dt = ical_dt.format(label,
-                             dt.year,
-                             dt.month,
-                             dt.day,
-                             dt.hour,
-                             dt.minute,
-                             tz)
+                             event_time.year,
+                             event_time.month,
+                             event_time.day,
+                             event_time.hour,
+                             event_time.minute,
+                             tzone)
     return ical_dt
 
 
 def create_ical_event(event):
-    '''
-    creates a ical even with all the key details
-    '''
+    """create ical event string
+    args
+        event (dict)
+            event dictionary
+    returns
+        event (str)
+            string describing event in ICAL format"""
     uid = 'UID:{}'.format(event['uid'])
     today = dt.datetime.today().replace(hour=0, minute=1)
     start, finish = event['dt_start'], event['dt_finish']
@@ -57,7 +59,8 @@ def create_ical_event(event):
     summary = 'SUMMARY:{}'.format(event['event_name'])
     desc = 'DESCRIPTION:{}'.format(event['location'])
     loc = 'LOCATION:{}'.format(event['location'])
-    msg = '\r\nBEGIN:VEVENT\r\n{}\r\n{}\r\n{}\r\n{}\r\n{}\r\n{}\r\n{}\r\nEND:VEVENT\r\n'
+    msg = ('\r\nBEGIN:VEVENT\r\n{}\r\n{}\r\n{}\r\n{}'
+           '\r\n{}\r\n{}\r\n{}\r\nEND:VEVENT\r\n')
     return msg.format(uid, dtstamp, dtstart, dtend, summary, desc, loc)
 
 
@@ -99,12 +102,12 @@ def parse_times(event, standard_duration=3.):
         finish = ' '.join([event['start_date'], event['end_time']])
     else:
         finish = ' '.join([event['start_date'], event['time']])
-    finish = parse(finish)
-    start = parse(start)
-    if finish == start:
-        finish = start + dt.timedelta(hours=standard_duration)
-    event.update({'dt_start': start,
-                  'dt_finish': finish})
+    dt_finish = parse(finish)
+    dt_start = parse(start)
+    if dt_finish == dt_start:
+        dt_finish = dt_start + dt.timedelta(hours=standard_duration)
+    event.update({'dt_start': dt_start,
+                  'dt_finish': dt_finish})
     return event
 
 
@@ -127,17 +130,17 @@ def get_csv(fpath):
 
 
 def main():
+    """Script designed to take a csv file with a list of key event details and
+    return a csv file importable into an ical compatible calendar programme"""
     events = get_csv(r'tests/at_data/example.csv')
-    for i in range(0,len(events)):
-        events[i].update({'uid': hashlib.md5(str(dt.datetime.today())).digest()})
+    for i in range(0, len(events)):
+        events[i].update({'uid': hashlib.md5(
+            str(dt.datetime.today())).digest()})
     events = [parse_times(event) for event in events]
     events = [create_ical_event(event) for event in events]
-    with open('tests/at_data/file.ics', 'w') as fh:
-        fh.write(create_ical(events))
-        fh.close()
-
-
-
+    with open('tests/at_data/file.ics', 'w') as fhandle:
+        fhandle.write(create_ical(events))
+        fhandle.close()
 
 
 if __name__ == "__main__":
