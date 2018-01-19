@@ -138,6 +138,7 @@ def main():
             str(dt.datetime.today())).digest()})
     events = [parse_times(event) for event in events]
     events = [create_ical_event(event) for event in events]
+
     with open('tests/at_data/file.ics', 'w') as fhandle:
         fhandle.write(create_ical(events))
         fhandle.close()

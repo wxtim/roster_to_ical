@@ -5,6 +5,8 @@ import datetime as dt
 from morriscal import (
     ical_dt_constructor,
     create_ical_event,
+    parse_times,
+    get_csv
     )
 
 BIRTHDAY = dt.datetime(year=1983,
@@ -35,15 +37,30 @@ class Test_ical_dt_constructor(unittest.TestCase):
 
 class Test_create_ical_event(unittest.TestCase):
     def test_basic(self):
-        result = create_ical_event(EVENT)
-        expected = ('\r\nBEGIN:VEVENT\r\n'
-                    'UID:fakdshfakdshf\r\n'
-                    'DTSTAMP:20180114T0001Z\r\n'
-                    'DTSTART:20180106T1800Z\r\n'
-                    'DTEND:20180106T2100Z\r\n'
-                    'SUMMARY:folk festival\r\n'
-                    'DESCRIPTION:sometown\r\n'
-                    'LOCATION:sometown\r\n'
-                    'END:VEVENT\r\n')
-        self.assertEqual(result, expected)
+        results = create_ical_event(EVENT).split('\n')
+        expecteds = ['\r','BEGIN:VEVENT\r',
+                    'UID:fakdshfakdshf\r',
+                    'DTSTAMP:20180119T0001Z\r',
+                    'DTSTART:20180106T1800Z\r',
+                    'DTEND:20180106T2100Z\r',
+                    'SUMMARY:folk festival\r',
+                    'DESCRIPTION:sometown\r',
+                    'LOCATION:sometown\r',
+                    'END:VEVENT\r']
+        for result, expected in zip(results, expecteds):
+            self.assertEqual(result, expected)
 
+
+class Test_parse_times(unittest.TestCase):
+    def test_basic(self):
+        EVENT.pop('dt_start')
+        EVENT.pop('dt_finish')
+        result = parse_times(EVENT)
+        self.assertEqual(EVENT, result)
+
+
+class Test_get_csv(unittest.TestCase):
+    def test_basic(self):
+        result = get_csv(r'at_data/example.csv')
+        self.assertEqual(type(result), list)
+        self.assertEqual(type(result[0]), dict)
