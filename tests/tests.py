@@ -6,7 +6,7 @@ from ical_utils import (
     ical_dt_constructor,
     create_ical_event,
     parse_times,
-    get_csv
+    get_csv,
     )
 
 BIRTHDAY = dt.datetime(year=1983,
@@ -64,3 +64,42 @@ class Test_get_csv(unittest.TestCase):
         result = get_csv(r'at_data/example.csv')
         self.assertEqual(type(result), list)
         self.assertEqual(type(result[0]), dict)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
