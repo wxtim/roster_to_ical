@@ -2,7 +2,7 @@ import unittest
 
 import datetime as dt
 
-from morriscal import (
+from ical_utils import (
     ical_dt_constructor,
     create_ical_event,
     parse_times,
